@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load markdown_extras %}
+
 
 {% block content %} 
 
@@ -22,7 +24,7 @@
                     </div>
                 {% endif %}
 
-                <p>{{ post.content }}</p>
+                <p>{{ post.content | markdown | safe }}</p>
 
             </div>
         </div>
