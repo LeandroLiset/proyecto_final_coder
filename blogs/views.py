@@ -74,3 +74,10 @@ class SearchResultsView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         return context
+
+
+from django.shortcuts import render
+
+def about_me(request):
+    return render(request, 'about_me.html')
+
