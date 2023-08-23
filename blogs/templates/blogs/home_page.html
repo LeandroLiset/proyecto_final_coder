@@ -24,21 +24,23 @@
                             <a href="{{ post.get_absolute_url }}" style="text-decoration: none"
                                class="text-black">
                                 {{ post.title }}
-                            </a>
-                            {% if user.is_authenticated and user == post.author %}
-                            <form method="POST" action="{% url 'blogs:eliminar_publicacion' post.slug %}">
-                                {% csrf_token %}
-                            <h6><button type="submit">Eliminar Publicación</button></h6>
-                            </form>
-                            {% endif %}                           
+                            </a>                         
                         </h2>
                         <p class="blog-post-meta">{{ post.date_created.date }}. {{post.author}}</p>
-
-                        <hr>
-                        <p>{{ post.overview }}</p>
+                        {% if user.is_authenticated and user == post.author %}
+                        <form method="POST" action="{% url 'blogs:eliminar_publicacion' post.slug %}">
+                            {% csrf_token %}
+                        <h6><button type="submit">Eliminar Publicación</button></h6>
+                        </form>
+                        <form method="post" action="{% url 'blogs:editar_publicacion' post.slug %}">
+                            {% csrf_token %}
+                            <h6><button type="submit">Editar Publicación</button></h6>
+                        </form>
+                        {% endif %}                  
+                        <hr>                       
                     </article>
                 {% endfor %}
-
+                          
             </div>
 
             <div class="col-md-4">

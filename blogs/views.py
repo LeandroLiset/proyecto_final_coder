@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.views import generic
 from django.db.models import Q
@@ -8,6 +8,9 @@ from django.views.generic.edit import CreateView, DeleteView
 from .forms import PublicacionForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.urls import reverse
+from django.views import View
+from django.core.exceptions import PermissionDenied
 
 
 from blogs.models import Post, Category
@@ -101,8 +104,35 @@ class CrearPublicacionView(LoginRequiredMixin, CreateView):
 
 class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
     model = Post
-    success_url = '/'  
+    template_name = 'eliminar_publicacion_confirm.html'
+    success_url = "/"
     
     def get_queryset(self):
         return self.model.objects.filter(author=self.request.user)
+    
+
+
+
+class EditarPublicacionView(LoginRequiredMixin, View):
+    template_name = 'editar_publicacion.html'
+
+    def get(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        if post.author != request.user:
+            raise PermissionDenied 
+        form = PublicacionForm(instance=post)
+        context = {'form': form, 'post': post}
+        return render(request, self.template_name, context)
+
+    def post(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        if post.author != request.user:
+            raise PermissionDenied
+        form = PublicacionForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('blogs:post', kwargs={'slug': post.slug}))
+        context = {'form': form, 'post': post}
+        return render(request, self.template_name, context)
+        
 
