@@ -4,9 +4,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from django.db.models import Q
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 from .forms import PublicacionForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 
 
 from blogs.models import Post, Category
@@ -94,4 +95,14 @@ class CrearPublicacionView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+    
+    login_url = reverse_lazy('login')
+
+
+class EliminarPublicacionView(LoginRequiredMixin, DeleteView):
+    model = Post
+    success_url = '/'  
+    
+    def get_queryset(self):
+        return self.model.objects.filter(author=self.request.user)
 

@@ -25,6 +25,12 @@
                                class="text-black">
                                 {{ post.title }}
                             </a>
+                            {% if user.is_authenticated and user == post.author %}
+                            <form method="POST" action="{% url 'blogs:eliminar_publicacion' post.slug %}">
+                                {% csrf_token %}
+                            <h6><button type="submit">Eliminar Publicación</button></h6>
+                            </form>
+                            {% endif %}                           
                         </h2>
                         <p class="blog-post-meta">{{ post.date_created.date }}. {{post.author}}</p>
 
