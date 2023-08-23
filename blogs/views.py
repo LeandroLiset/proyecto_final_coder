@@ -4,6 +4,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from django.db.models import Q
+from django.views.generic.edit import CreateView
+from .forms import PublicacionForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 from blogs.models import Post, Category
 
@@ -80,4 +84,14 @@ from django.shortcuts import render
 
 def about_me(request):
     return render(request, 'about_me.html')
+
+class CrearPublicacionView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PublicacionForm
+    template_name = 'crear_publicacion.html'
+    success_url = '/'
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 

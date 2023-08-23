@@ -1,5 +1,6 @@
 from django.urls import path
 from blogs import views
+from .views import CrearPublicacionView
 
 app_name = 'blogs'
 
@@ -10,4 +11,5 @@ urlpatterns = [
     path('category/<slug:slug>', views.CategoryListView.as_view(), name='category'),
     path('search/', views.SearchResultsView.as_view(), name='search'),
     path('about/', views.about_me, name='about_me'),
+    path('crear-publicacion/', CrearPublicacionView.as_view(), name='crear_publicacion'),
 ]
